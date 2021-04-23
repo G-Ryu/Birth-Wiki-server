@@ -1,10 +1,10 @@
 import { getRepository } from "typeorm";
-import { RecordCard } from "../../entity/RecordCard";
 import { User } from "../../entity/User";
 import verification from "../../func/verification";
 
 export = async (req, res) => {
-  const { source, nickName, date, privacy, cardDesc, accessToken } = req.body;
+  const { source, nickName, accessToken } = req.body;
+
   const refreshToken = req.cookies.refreshToken;
 
   let verify = await verification(source, accessToken, refreshToken);
@@ -15,34 +15,22 @@ export = async (req, res) => {
   }
 
   try {
-    const user = await getRepository(User)
+    const userRecordData = await getRepository(User)
       .createQueryBuilder("user")
       .where("user.nickName = :nickName", { nickName })
+      .leftJoinAndSelect("user.cards", "action_card")
       .getOne();
 
-    const oneCase = new RecordCard();
-    oneCase.date = date;
-    oneCase.cardDesc = cardDesc;
-    oneCase.user = user;
-    oneCase.privacy = privacy || false;
-    oneCase.writer = nickName;
-    if (req.file) {
-      oneCase.cardImage = req.file.path;
-    }
-    await oneCase.save();
+    let recordCards =
+      userRecordData.cards.length > 0 ? userRecordData.cards : null;
 
     if (verify.action === "change") {
-      res.send({
-        data: { accessToken: verify.accessToken },
-        message: "create record",
-      });
+      res.send({ data: { recordCards, accessToken: verify.accessToken } });
     } else {
-      res.send({
-        message: `create record`,
-      });
+      res.send({ data: { recordCards } });
     }
   } catch (err) {
-    console.log(err);
+    console.log("recordLook\n", err);
     res.status(400).send({ message: "something wrong" });
   }
 };

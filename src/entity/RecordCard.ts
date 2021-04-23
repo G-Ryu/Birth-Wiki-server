@@ -20,6 +20,9 @@ export class RecordCard extends BaseEntity {
   cardImage: string;
 
   @Column()
+  writer: string;
+
+  @Column({ nullable: true })
   cardDesc: string;
 
   @Column()
@@ -29,5 +32,5 @@ export class RecordCard extends BaseEntity {
   user: User;
 
   @ManyToMany(() => User, { cascade: true })
-  users: User[]
+  users: User[];
 }

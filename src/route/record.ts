@@ -16,5 +16,6 @@ const upload = multer({ storage: _storage });
 router.post("/create", upload.single("cardImage"), recordController.create);
 router.patch("/update", upload.single("cardImage"), recordController.update);
 router.delete("/delete", recordController.delete);
+router.post("/look", recordController.look);
 
 export = router;
