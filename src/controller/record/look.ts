@@ -22,7 +22,7 @@ export = async (req, res) => {
       .getOne();
 
     let recordCards =
-      userRecordData.cards.length > 0 ? userRecordData.cards : null;
+      userRecordData.cards && userRecordData.cards.length > 0 ? userRecordData.cards : null;
 
     if (verify.action === "change") {
       res.send({ data: { recordCards, accessToken: verify.accessToken } });
