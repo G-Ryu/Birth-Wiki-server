@@ -2,7 +2,7 @@ export = async (req, res) => {
   try {
     res
       .clearCookie("refreshToken", {
-        domain: "localhost",
+        domain: "birthwiki.space",
         path: "/",
         sameSite: "none",
         httpOnly: true,
