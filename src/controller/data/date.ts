@@ -10,8 +10,8 @@ import { Wiki_music } from "../../entity/Wiki_music";
 import { culture, dailyData, weeklyData } from "../../types";
 
 export = async (req, res) => {
-  const { date } = req.body;
-  let curYear;
+  const date = req.query.date;
+  let curYear: number;
 
   const weekCount = (yyyy: number, mm: number, dd: number): string => {
     let today = new Date(yyyy, mm - 1, dd);
@@ -35,10 +35,10 @@ export = async (req, res) => {
     return week < 10 ? "0" + week : "" + week;
   };
 
-  const year = date.split("-")[0];
-  const month = date.split("-")[1];
-  const day = date.split("-")[2];
-  const week: string = weekCount(Number(year), Number(month), Number(day));
+  const year: number = Number(date.split("-")[0]);
+  const month: number = Number(date.split("-")[1]);
+  const day: number = Number(date.split("-")[2]);
+  const week: string = weekCount(year, month, day);
   const weekly: string = curYear + week;
 
   const getDaily = async (field: string, dateData: Wiki_daily) => {
@@ -67,6 +67,7 @@ export = async (req, res) => {
         image: dateData.image,
         category: field,
       };
+      
       let contents: [string, string[]][] = [];
       stone.forEach((event) => {
         contents.push([event.year, JSON.parse(event.event)]);

@@ -6,6 +6,7 @@ export interface dailyData {
   like?: true;
   contents?: [string, string[]][];
 }
+
 export interface weeklyData {
   id?: number;
   date?: string;
@@ -20,4 +21,14 @@ export interface culture {
   title?: string;
   poster?: string;
   singer?: string;
+}
+
+export interface decodedRefresh {
+  id: number;
+}
+
+export interface decodedAccess {
+  nickName: string;
+  exp: number;
+  iat: number;
 }

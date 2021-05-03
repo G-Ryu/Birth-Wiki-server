@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { getRepository } from "typeorm";
 import { User } from "../../entity/User";
 import { Refresh } from "../../entity/Refresh";
-import getLikeCard from "../../func/getLikeCard";
+import getLikeCard from "../../utils/getLikeCard";
 import("dotenv/config");
 
 export = async (req, res) => {

@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 import { RecordCard } from "../../entity/RecordCard";
-import verification from "../../func/verification";
+import verification from "../../utils/verification";
 
 export = async (req, res) => {
   const { source, cardId, privacy, contents, accessToken } = req.body;

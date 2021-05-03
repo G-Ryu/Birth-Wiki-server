@@ -3,18 +3,10 @@ import { Wiki_daily } from "../../entity/Wiki_daily";
 import { Wiki_weekly } from "../../entity/Wiki_weekly";
 import { RecordCard } from "../../entity/RecordCard";
 import { User } from "../../entity/User";
-import verification from "../../func/verification";
 
 export = async (req, res) => {
-  const { source, action, nickName, cardId, category, accessToken } = req.body;
-  const refreshToken = req.cookies.refreshToken;
-
-  let verify = await verification(source, accessToken, refreshToken);
-
-  if (verify.action === "error") {
-    res.status(403).send({ message: "unavailable token" });
-    return;
-  }
+  const { action, cardId, category} = req.body;
+  const nickName = req.nickName
 
   try {
     let user = await getRepository(User)

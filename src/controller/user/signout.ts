@@ -2,7 +2,7 @@ import { getConnection } from "typeorm";
 import { User } from "../../entity/User";
 import crypto from "crypto";
 import axios from "axios";
-import verification from "../../func/verification";
+import verification from "../../utils/verification";
 import("dotenv/config");
 
 export = async (req, res) => {

@@ -1,7 +1,7 @@
 import { User } from "../../entity/User";
 import { getRepository } from "typeorm";
 import crypto from "crypto";
-import verification from "../../func/verification";
+import verification from "../../utils/verification";
 import("dotenv/config");
 
 export = async (req, res) => {

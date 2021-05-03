@@ -5,6 +5,7 @@ import cors from "cors";
 import { createConnection } from "typeorm";
 import "reflect-metadata";
 import { userRouter, dataRouter, likeRouter, recordRouter } from "./route";
+import verification from "./utils/verification";
 import dbconfig from "./config";
 
 const app: express.Application = express();
@@ -21,13 +22,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://localhost:3000"],
+    origin: ["https://birthwiki.space"],
     credentials: true,
   })
 );
 app.use(cookieParser());
-
 app.use("/image", express.static("image"));
+app.use(verification);
 
 app.use("/user", userRouter);
 app.use("/data", dataRouter);

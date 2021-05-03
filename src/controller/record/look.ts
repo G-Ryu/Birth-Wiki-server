@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 import { User } from "../../entity/User";
-import verification from "../../func/verification";
+import verification from "../../utils/verification";
 
 export = async (req, res) => {
   const { source, nickName, accessToken } = req.body;
