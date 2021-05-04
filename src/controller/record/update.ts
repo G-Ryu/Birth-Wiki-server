@@ -1,43 +1,33 @@
 import { getRepository } from "typeorm";
 import { RecordCard } from "../../entity/RecordCard";
-import verification from "../../utils/verification";
 
 export = async (req, res) => {
-  const { source, cardId, privacy, contents, accessToken } = req.body;
-  const refreshToken = req.cookies.refreshToken;
+  const { cardId, privacy, cardDesc } = req.body;
+  const nickName = req.nickName;
 
-  let verify = await verification(source, accessToken, refreshToken);
-
-  if (verify.action === "error") {
-    res.status(403).send({ message: "unavailable token" });
+  if (!nickName) {
+    res.status(403).send({ message: "invalid user" });
     return;
   }
 
   try {
-    const oneCase = await getRepository(RecordCard)
+    const recordCard = await getRepository(RecordCard)
       .createQueryBuilder("record_card")
       .where("record_card.id = :id", { id: cardId })
       .getOne();
 
-    oneCase.cardDesc = contents;
-    oneCase.privacy = privacy;
+    recordCard.cardDesc = cardDesc;
+    recordCard.privacy = privacy || recordCard.privacy;
     if (req.file) {
-      oneCase.cardImage = req.file.path;
+      recordCard.cardImage = req.file.path;
     }
-    await oneCase.save();
+    await recordCard.save();
 
-    if (verify.action === "change") {
-      res.send({
-        data: { accessToken: verify.accessToken },
-        message: "update record",
-      });
-    } else {
-      res.send({
-        message: "update record",
-      });
-    }
+    delete recordCard.user;
+
+    res.send({ data: { recordCard }, message: "update record" });
   } catch (err) {
-    console.log(err);
+    console.log("record-update\n", err);
     res.status(400).send({ message: "something wrong" });
   }
 };

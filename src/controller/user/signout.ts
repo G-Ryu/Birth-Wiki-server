@@ -1,11 +1,15 @@
 import { getConnection } from "typeorm";
 import { User } from "../../entity/User";
-import crypto from "crypto";
-import axios from "axios";
-import verification from "../../utils/verification";
 import("dotenv/config");
 
 export = async (req, res) => {
+  const nickName = req.nickName;
+
+  if (!nickName) {
+    res.status(403).send({ message: "invalid user" });
+    return;
+  }
+
   try {
     await getConnection()
       .createQueryBuilder()
@@ -16,7 +20,7 @@ export = async (req, res) => {
 
     res
       .clearCookie("refreshToken", {
-        domain: "localhost",
+        domain: "birthwiki.space",
         path: "/",
         sameSite: "none",
         httpOnly: true,

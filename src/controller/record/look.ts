@@ -1,3 +1,4 @@
+/*
 import { getRepository } from "typeorm";
 import { User } from "../../entity/User";
 import verification from "../../utils/verification";
@@ -34,3 +35,4 @@ export = async (req, res) => {
     res.status(400).send({ message: "something wrong" });
   }
 };
+*/

@@ -5,8 +5,13 @@ import { RecordCard } from "../../entity/RecordCard";
 import { User } from "../../entity/User";
 
 export = async (req, res) => {
-  const { action, cardId, category} = req.body;
-  const nickName = req.nickName
+  const { action, cardId, category } = req.body;
+  const nickName = req.nickName;
+
+  if (!nickName) {
+    res.status(403).send({ message: "invalid user" });
+    return;
+  }
 
   try {
     let user = await getRepository(User)
@@ -67,7 +72,6 @@ export = async (req, res) => {
           user.dailys = user.dailys.filter((card) => {
             return card.id !== Number(cardId);
           });
-
           break;
 
         case "music":
@@ -86,18 +90,9 @@ export = async (req, res) => {
     }
     await user.save();
 
-    if (verify.action === "change") {
-      res.send({
-        data: { accessToken: verify.accessToken },
-        message: `${action} success`,
-      });
-    } else {
-      res.send({
-        message: `${action} success`,
-      });
-    }
+    res.send({ message: `${action} success` });
   } catch (err) {
-    console.log("create like\n", err);
+    console.log("like-like\n", err);
     res.status(400).send({ message: "something wrong" });
   }
 };

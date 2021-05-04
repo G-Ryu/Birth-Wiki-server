@@ -6,7 +6,7 @@ export = async (req, res) => {
 
   if (userEmail) {
     try {
-      let existEmail = await getRepository(User)
+      const existEmail = await getRepository(User)
         .createQueryBuilder("user")
         .where("user.userEmail = :userEmail", { userEmail })
         .getOne();
@@ -21,7 +21,7 @@ export = async (req, res) => {
 
   if (nickName) {
     try {
-      let existNick = await getRepository(User)
+      const existNick = await getRepository(User)
         .createQueryBuilder("user")
         .where("user.nickName = :nickName", { nickName })
         .getOne();

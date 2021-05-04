@@ -1,16 +1,13 @@
 import { getRepository } from "typeorm";
 import { RecordCard } from "../../entity/RecordCard";
 import { User } from "../../entity/User";
-import verification from "../../utils/verification";
 
 export = async (req, res) => {
-  const { source, nickName, date, privacy, cardDesc, accessToken } = req.body;
-  const refreshToken = req.cookies.refreshToken;
+  const { date, privacy, cardDesc } = req.body;
+  const nickName = req.nickName;
 
-  let verify = await verification(source, accessToken, refreshToken);
-
-  if (verify.action === "error") {
-    res.status(403).send({ message: "unavailable token" });
+  if (!nickName) {
+    res.status(403).send({ message: "invalid user" });
     return;
   }
 
@@ -20,29 +17,22 @@ export = async (req, res) => {
       .where("user.nickName = :nickName", { nickName })
       .getOne();
 
-    const oneCase = new RecordCard();
-    oneCase.date = date;
-    oneCase.cardDesc = cardDesc;
-    oneCase.user = user;
-    oneCase.privacy = privacy || false;
-    oneCase.writer = nickName;
+    const recordCard = new RecordCard();
+    recordCard.date = date;
+    recordCard.cardDesc = cardDesc;
+    recordCard.user = user;
+    recordCard.privacy = privacy || false;
+    recordCard.writer = nickName;
     if (req.file) {
-      oneCase.cardImage = req.file.path;
+      recordCard.cardImage = req.file.path;
     }
-    await oneCase.save();
+    await recordCard.save();
 
-    if (verify.action === "change") {
-      res.send({
-        data: { accessToken: verify.accessToken },
-        message: "create record",
-      });
-    } else {
-      res.send({
-        message: `create record`,
-      });
-    }
+    delete recordCard.user;
+
+    res.send({ data: { recordCard }, message: `create record` });
   } catch (err) {
-    console.log(err);
+    console.log("record-create\n", err);
     res.status(400).send({ message: "something wrong" });
   }
 };

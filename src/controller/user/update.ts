@@ -1,17 +1,14 @@
 import { User } from "../../entity/User";
 import { getRepository } from "typeorm";
 import crypto from "crypto";
-import verification from "../../utils/verification";
 import("dotenv/config");
 
 export = async (req, res) => {
-  const { source, userEmail, accessToken, nickName, password } = req.body;
-  const refreshToken = req.cookies.refreshToken;
+  const { password } = req.body;
+  const nickName = req.nickName;
 
-  let verify = await verification(source, accessToken, refreshToken);
-
-  if (verify.action === "error") {
-    res.status(403).send({ message: "unavailable token" });
+  if (!nickName) {
+    res.status(403).send({ message: "invalid user" });
     return;
   }
 

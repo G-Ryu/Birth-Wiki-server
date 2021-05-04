@@ -173,7 +173,7 @@ export = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log("date data\n", err);
+    console.log("data-date\n", err);
     res.status(400).send({ message: "something wrong" });
   }
 };

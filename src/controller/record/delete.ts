@@ -1,15 +1,12 @@
 import { getConnection } from "typeorm";
 import { RecordCard } from "../../entity/RecordCard";
-import verification from "../../utils/verification";
 
 export = async (req, res) => {
-  const { source, cardId, accessToken } = req.body;
-  const refreshToken = req.cookies.refreshToken;
+  const { cardId } = req.body;
+  const nickName = req.nickName;
 
-  let verify = await verification(source, accessToken, refreshToken);
-
-  if (verify.action === "error") {
-    res.status(403).send({ message: "unavailable token" });
+  if (!nickName) {
+    res.status(403).send({ message: "invalid user" });
     return;
   }
 
@@ -21,18 +18,9 @@ export = async (req, res) => {
       .where("record_card.id = :id", { id: cardId })
       .execute();
 
-    if (verify.action === "change") {
-      res.send({
-        data: { accessToken: verify.accessToken },
-        message: "delete record",
-      });
-    } else {
-      res.send({
-        message: "delete record",
-      });
-    }
+    res.send({ message: "delete record" });
   } catch (err) {
-    console.log(err);
+    console.log("record-delete\n", err);
     res.status(400).send({ message: "something wrong" });
   }
 };
