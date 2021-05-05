@@ -9,7 +9,8 @@ export = async (req, res) => {
         secure: true,
       })
       .send({ message: "logOut" });
-  } catch {
+  } catch (err) {
+    console.log("user-logout\n", err);
     res.status(400).send({ message: "something wrong" });
   }
 };

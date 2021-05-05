@@ -17,11 +17,10 @@ export = async (req, res) => {
   let userData;
   let nickName;
   let profileImage;
-  let accessToken;
-  let refreshToken;
   let refreshData;
   let hashRT;
   let email = userEmail;
+  let revokeRT;
 
   try {
     if (source === "home") {
@@ -58,7 +57,7 @@ export = async (req, res) => {
     } else {
       if (source === "google") {
         const {
-          data: { access_token },
+          data: { access_token, refresh_token },
         } = await axios({
           url: "https://oauth2.googleapis.com/token",
           method: "post",
@@ -79,6 +78,7 @@ export = async (req, res) => {
           },
         });
 
+        revokeRT = refresh_token;
         email = profile.data.email;
         nickName = profile.data.name;
         profileImage = profile.data.picture;
@@ -114,7 +114,7 @@ export = async (req, res) => {
 
       if (source === "naver") {
         const {
-          data: { access_token },
+          data: { access_token, refresh_token },
         } = await axios({
           url: "https://nid.naver.com/oauth2.0/token",
           method: "post",
@@ -134,6 +134,7 @@ export = async (req, res) => {
           },
         });
 
+        revokeRT = refresh_token;
         email = String(profile.data.response.email);
         nickName = profile.data.response.nickname;
         profileImage = profile.data.response.profile_image;
@@ -152,6 +153,8 @@ export = async (req, res) => {
         userData.userEmail = email;
         userData.nickName = nickName;
         userData.profileImage = profileImage;
+        userData.revokeRT = revokeRT;
+        userData.source = source;
         await userData.save();
 
         refreshData = new Refresh();
@@ -167,11 +170,11 @@ export = async (req, res) => {
       }
     }
 
-    accessToken = jwt.sign({ nickName }, process.env.SHA_AT, {
+    let accessToken = jwt.sign({ nickName }, process.env.SHA_AT, {
       expiresIn: 3600,
     });
 
-    refreshToken = jwt.sign({ id: userData.id }, process.env.SHA_RT, {
+    let refreshToken = jwt.sign({ id: userData.id }, process.env.SHA_RT, {
       expiresIn: 2419200,
     });
 
@@ -208,11 +211,11 @@ export = async (req, res) => {
           profileImage,
           accessToken,
           likeCards: userCard.likeCards,
-          recordCards: userCard.recordCards,
+          recordCards: userCard.myRecordCards,
         },
       });
   } catch (err) {
-    console.log("login\n", err);
+    console.log("user-login\n", err);
     res.status(400).send({ message: "something wrong" });
   }
 };

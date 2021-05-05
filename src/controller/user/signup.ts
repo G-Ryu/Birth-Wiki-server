@@ -15,13 +15,15 @@ export = async (req, res) => {
     user.userEmail = userEmail;
     user.nickName = nickName;
     user.password = hashPW;
+    user.source = "home";
     if (req.file) {
       user.profileImage = `https://server.birthwiki.space/${req.file.path}`;
     }
     await user.save();
 
     res.send({ message: "signUp" });
-  } catch {
+  } catch (err) {
+    console.log("user-signup\n", err);
     res.status(400).send({ message: "something wrong" });
   }
 };

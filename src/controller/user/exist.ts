@@ -29,7 +29,8 @@ export = async (req, res) => {
       existNick
         ? res.status(401).send({ message: "unverified nickName" })
         : res.send({ message: "available nickName" });
-    } catch {
+    } catch (err) {
+      console.log("user-exist\n", err);
       res.status(400).send({ message: "something wrong" });
     }
   }

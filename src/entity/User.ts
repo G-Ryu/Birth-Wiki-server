@@ -31,6 +31,12 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   profileImage: string;
 
+  @Column({ nullable: true })
+  revokeRT: string;
+
+  @Column({ nullable: true })
+  source: string;
+
   @OneToMany(() => RecordCard, (card) => card.user)
   cards: RecordCard[];
 
@@ -76,7 +82,7 @@ export class User extends BaseEntity {
   })
   likeRecords: RecordCard[];
 
-  @OneToOne(() => Refresh, refresh => refresh.id)
+  @OneToOne(() => Refresh, (refresh) => refresh.id)
   @JoinColumn()
   refresh: Refresh;
 }

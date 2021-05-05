@@ -3,7 +3,7 @@ import { RecordCard } from "../../entity/RecordCard";
 import { User } from "../../entity/User";
 
 export = async (req, res) => {
-  const { date, privacy, cardDesc } = req.body;
+  const { date, privacy, contents } = req.body;
   const nickName = req.nickName;
 
   if (!nickName) {
@@ -19,7 +19,7 @@ export = async (req, res) => {
 
     const recordCard = new RecordCard();
     recordCard.date = date;
-    recordCard.cardDesc = cardDesc;
+    recordCard.cardDesc = contents;
     recordCard.user = user;
     recordCard.privacy = privacy || false;
     recordCard.writer = nickName;

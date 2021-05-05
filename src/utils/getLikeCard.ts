@@ -106,6 +106,21 @@ export = async (nickName: string) => {
     }
   };
 
+  const refineRecord = (likeIdArr: RecordCard[]) => {
+    if (likeIdArr.length > 0) {
+      likeIdArr.forEach((card) => {
+        likeCards.push({
+          id: card.id,
+          date: card.date,
+          writer: card.writer,
+          image: card.cardImage,
+          contents: card.cardDesc,
+          category: "record",
+        });
+      });
+    }
+  };
+
   try {
     const userLikeData = await getRepository(User)
       .createQueryBuilder("user")
@@ -121,11 +136,12 @@ export = async (nickName: string) => {
       .leftJoinAndSelect("user.cards", "action_card")
       .getOne();
 
-    const birthIds: Wiki_daily[] = [];
     const issueIds: Wiki_daily[] = [];
+    const birthIds: Wiki_daily[] = [];
     const deathIds: Wiki_daily[] = [];
     const musicIds: Wiki_weekly[] = [];
     const movieIds: Wiki_weekly[] = [];
+    const likeRecordIds: RecordCard[] = userLikeData.likeRecords;
 
     userLikeData.dailys.forEach((like) => {
       switch (like.fieldName) {
@@ -157,26 +173,17 @@ export = async (nickName: string) => {
     await dailyData(deathIds, "death");
     await weeklyData(musicIds, "music");
     await weeklyData(movieIds, "movie");
-    const likeRecordCards = 1;
-    let recordCards;
-    if (userRecordData.cards.length > 0) {
-      recordCards = userRecordData.cards.map((card) => {
-        return { ...card, like: true };
-      });
-    } else {
-      recordCards = null;
-    }
+    await refineRecord(likeRecordIds);
+    const myRecordCards =
+      userRecordData.cards.length > 0 ? userRecordData.cards : null;
 
     if (likeCards.length === 0) {
       likeCards = null;
     }
 
-    return {
-      likeCards,
-      recordCards,
-    };
+    return { likeCards, myRecordCards };
   } catch (err) {
-    console.log("getLikeCard\n", err);
+    console.log("utils-getLikeCard\n", err);
     return { likeCards: null, recordCards: null };
   }
 };

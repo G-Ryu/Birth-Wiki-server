@@ -22,27 +22,19 @@ export = async (req, res) => {
   try {
     const user = await getRepository(User)
       .createQueryBuilder("user")
-      .where("user.userEmail = :userEmail", { userEmail })
+      .where("user.nickName = :nickName", { nickName })
       .getOne();
 
-    user.nickName = nickName || user.nickName;
+    user.nickName = req.body.nickName || user.nickName;
     user.password = hashPW || user.password;
     if (req.file) {
       user.profileImage = `https://server.birthwiki.space/${req.file.path}`;
     }
     await user.save();
 
-    if (verify.action === "change") {
-      res.send({
-        data: { accessToken: verify.accessToken },
-        message: "update userInfo",
-      });
-    } else {
-      res.send({
-        message: "update userInfo",
-      });
-    }
-  } catch {
+    res.send({ message: "update userInfo" });
+  } catch (err) {
+    console.log("user-update\n", err);
     res.status(400).send({ message: "something wrong" });
   }
 };
